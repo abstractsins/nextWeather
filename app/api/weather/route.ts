@@ -41,9 +41,16 @@ export async function GET(req: NextRequest) {
             // Add light caching if you want (same lat/lon calls)
             // headers: { "Cache-Control": "public, max-age=60" },
         });
-    } catch (err: any) {
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return NextResponse.json(
+                { error: "Unexpected server error", details: err.message },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
-            { error: "Unexpected server error", details: err?.message },
+            { error: "Unexpected server error", details: "Unknown error" },
             { status: 500 }
         );
     }
