@@ -1,0 +1,25 @@
+.location {
+    margin: 2vh 1vw;
+}
+
+.location svg {
+    /* font-size: clamp(12pt, 1vw + 1rem, 28pt); */
+}
+
+.cityState {
+    padding: 1vh .5vw;
+    display: flex;
+    align-items: center;
+    gap: clamp(5px, .25vw, 10px);
+    font-size: clamp(10pt, 1vw + .25rem, 24pt);
+}
+
+.cityState::after {
+    content: '.';
+    visibility: hidden;
+}
+
+.mainContent {
+    display: flex;
+    justify-content: center;
+}
