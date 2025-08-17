@@ -1,6 +1,7 @@
 export interface LocationObj {
     county?: string;
     city?: string;
+    name?: string;
     suburb?: string;
     hamlet?: string;
     neighbourhood?: string;
