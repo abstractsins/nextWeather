@@ -21,10 +21,13 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const upstream = await fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${encodeURIComponent(
-                lat
-            )}&lon=${encodeURIComponent(lon)}&appid=${apiKey}&units=imperial`);
+        const u = new URL("https://api.openweathermap.org/data/2.5/forecast");
+        u.searchParams.set("lat", lat);
+        u.searchParams.set("lon", lon);
+        u.searchParams.set("appid", apiKey);
+        u.searchParams.set("units", "imperial");
+
+        const upstream = await fetch(u.toString());
 
         if (!upstream.ok) {
             const text = await upstream.text();
@@ -35,12 +38,11 @@ export async function GET(req: NextRequest) {
         }
 
         const data = await upstream.json();
-        // Optionally shape the response:
-        // const minimal = data?.results?.[0] ?? null;
+
         return NextResponse.json(data, {
-            // Add light caching if you want (same lat/lon calls)
-            // headers: { "Cache-Control": "public, max-age=60" },
+            headers: { "Cache-Control": "public, max-age=60" },
         });
+
     } catch (err: unknown) {
         if (err instanceof Error) {
             return NextResponse.json(
