@@ -11,7 +11,7 @@ import { useWeather } from '@/providers/WeatherProvider';
 
 export default function Home() {
 
-    const { locationData } = useWeather();
+    const { locationData, generalLocal } = useWeather();
 
     return (
         <div>
@@ -20,7 +20,7 @@ export default function Home() {
                 <span className={styles.cityState}>
                     <IoHome />
                     {locationData
-                        ? <>{locationData.city}, {locationData.state_code}</>
+                        ? <>{generalLocal}</>
                         : <MiniLoader />
                     }
                 </span>

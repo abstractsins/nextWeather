@@ -10,6 +10,7 @@ export default function useWeather() {
     const [weatherData, setWeatherData] = useState<ForecastResponse>();
     const [error, setError] = useState<string | null>(null);
     const [specificLocal, setSpecificLocal] = useState<string | null | undefined>(null);
+    const [generalLocal, setGeneralLocal] = useState<string | null | undefined>(null);
     const [assistantResponse, setAssistantResponse] = useState<string | undefined>();
     const [assistantWaiting, setAssistantWaiting] = useState<boolean>(false);
 
@@ -76,7 +77,7 @@ export default function useWeather() {
         const promptLocation = `${locationData?.city!}, ${locationData?.state!}, ${locationData?.country!} ${locationData?.name!}`;
 
         let prompt = `What's it like in ${promptLocation} right now? `;
-        prompt += `Don't use Kelvin. Use ${units === 'f' ? 'farenheit (rounded to nearest degree F) and MPH. DO NOT USE CELCIUS OR KPH. do not use metric at all.' : 'celcius with one decimal place and KPH. USE METRIC ONLY'}. `; 
+        prompt += `Don't use Kelvin. Use ${units === 'f' ? 'farenheit (rounded to nearest degree F) and MPH. DO NOT USE CELCIUS OR KPH. do not use metric at all.' : 'celcius with one decimal place and KPH. USE METRIC ONLY'}. `;
         prompt += `You must use the word 'damn' at least once as a modifier to an adjective about the weather overall or an acute aspect about it. `;
         prompt += `Be very emotional. `
         prompt += `Keep the overall response to three sentences max, or about 35 words. `
@@ -106,6 +107,16 @@ export default function useWeather() {
             'unknown'
         );
 
+        if (locationData.city && locationData.state_code) {
+            setGeneralLocal(`${locationData.city}, ${locationData.state_code}`);
+        } else if (locationData.county && locationData.state_code) {
+            setGeneralLocal(`${locationData.county}, ${locationData.state_code}`);
+        } else if (locationData.city && locationData.country) {
+            setGeneralLocal(`${locationData.city}, ${locationData.country}`);
+        } else if (locationData.ocean) {
+            setGeneralLocal(`${locationData.ocean}`);
+        }
+
         (async () => {
 
             try {
@@ -132,7 +143,7 @@ export default function useWeather() {
 
 
     return {
-        specificLocal,
+        specificLocal, generalLocal,
         locationData, setLocationData,
         weatherData, setWeatherData,
         coords, setCoords, setCustomCoords,
