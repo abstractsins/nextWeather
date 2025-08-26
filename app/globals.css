@@ -5,6 +5,7 @@
   --color-coral: #FF8552;
   --color-asparagus: #60993E;
   --color-cream: #F2F7F2;
+  --color-cream-semi: #f2f7f296;
   --color-blue: #2E86AB;
   --color-space: #1A1B41;
   --color-charcoal: #171717;
@@ -21,6 +22,9 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --font-crete: var(--font-crete-round);
+  --font-monst: var(--font-monsterrat-alt);
 }
 
 
@@ -46,5 +50,49 @@ body {
 }
 
 * {
-    /* border: 1px solid red; */
+  /* border: 1px solid red; */
+}
+
+.data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--foreground);
+  border-radius: 20px;
+  margin: 3vh 3vw;
+  padding: 1vh;
+  width: 100%;
+}
+
+.data-description {
+  font-size: clamp(14pt, 2vw, 20pt); 
+  opacity: 0.6;
+}
+
+.data-label {
+  font-family: var(--font-zain);
+  font-size: clamp(14pt, 2vw, 20pt);
+}
+
+.data-value-big {
+  display: flex;
+  font-size: clamp(18pt, 3vw + 1.5rem, 52pt);
+  align-items: baseline;
+}
+
+.data-label-small {
+  font-size: clamp(9pt, 1.5vw + 1rem, 26pt);
+}
+
+.data-label-small.degree {
+  padding: 1vh .5vh;
+  align-self: flex-start;
+}
+
+.invisible {
+    opacity: 0;
+}
+
+.visible {
+    opacity: 1;
 }

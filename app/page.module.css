@@ -12,6 +12,8 @@
     align-items: center;
     gap: clamp(5px, .25vw, 10px);
     font-size: clamp(10pt, 1vw + .25rem, 24pt);
+    font-family: var(--font-zain), serif;
+    font-weight: 300;
 }
 
 .cityState::after {

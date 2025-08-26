@@ -1,0 +1,13 @@
+.wrapper {
+    border-radius: 20px;
+    border: 1px solid var(--foreground);
+}
+
+.body {
+    padding: 2vh 1vw;
+    min-height: 100px;
+}
+
+.body span {
+    font-size: clamp(12pt, 2vw + .5rem, 24pt);
+}

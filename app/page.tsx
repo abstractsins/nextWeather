@@ -7,7 +7,7 @@ import { IoHome } from "react-icons/io5";
 import MiniLoader from '@/components/MiniLoader';
 import WeatherReadout from '@/components/WeatherReadout';
 
-import useWeather from '@/hooks/useWeather';
+import { useWeather } from '@/providers/WeatherProvider';
 
 export default function Home() {
 

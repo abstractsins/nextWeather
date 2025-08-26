@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 2vh 1vw;
+}
+
+.gpsInput {
+    background-color: darkgray;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+}
+
+.gpsInput::-webkit-inner-spin-button,
+.gpsInput::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    -ms-overflow-style: none !important;
+}
+
+.submit {
+    background-color: var(--background);
+    border: 1px solid var(--color-gray-dark);
+    cursor: pointer;
+    display: flex;
+    padding: 0 15px;
+    border-radius: 10px;
+    font-size: clamp(8pt, .75vw, 14pt);
+    transition: all 250ms;
+}
+
+.submit:active {
+    filter: invert();
+}
+
+.submit:hover {
+    border: 1px solid var(--color-cream-semi);
+}
