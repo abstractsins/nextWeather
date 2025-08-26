@@ -38,7 +38,7 @@ export default function LesserData() {
                                 id={"rain"}
                                 title={"Rain"}
                                 className={"data-container"}
-                                data={weatherData.current?.rain['1h']}
+                                data={weatherData.current?.rain!['1h']}
                                 data2={weatherData.current?.weather[0].description}
                             />
                         }
@@ -48,7 +48,7 @@ export default function LesserData() {
                                 id={"rain"}
                                 title={"Rain"}
                                 className={"data-container"}
-                                data={weatherData.current?.snow['1h']}
+                                data={weatherData.current?.snow!['1h']}
                                 data2={weatherData.current?.weather[0].description}
                             />
                         }

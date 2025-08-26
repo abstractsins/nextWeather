@@ -22,12 +22,14 @@ const geistMono = Geist_Mono({
 
 const zain = Zain({
   variable: '--font-zain',
+  subsets: ["latin"],
   weight: ['200', '300', '400', '700', '800'],
   display: 'swap'
 });
 
 const monst = Montserrat_Alternates({
   variable: '--font-monsterrat-alt',
+  subsets: ["latin"],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   display: 'swap'
 });
