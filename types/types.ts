@@ -11,7 +11,6 @@ export interface LocationObj {
     region?: string;
     iso3166_2?: string;
     country?: string;
-    name?: string;
 }
 
 export interface DataCardHeroProps {
