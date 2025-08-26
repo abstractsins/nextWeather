@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const u = new URL("https://api.openweathermap.org/data/2.5/forecast");
+        const u = new URL("https://api.openweathermap.org/data/3.0/onecall?");
         u.searchParams.set("lat", lat);
         u.searchParams.set("lon", lon);
         u.searchParams.set("appid", apiKey);

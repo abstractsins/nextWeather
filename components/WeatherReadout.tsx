@@ -1,5 +1,9 @@
-import useWeather from '@/hooks/useWeather';
+import { useWeather } from '@/providers/WeatherProvider';
 import styles from './WeatherReadout.module.css'
+import HeroData from './HeroData';
+import LesserData from './LesserData';
+import Assistant from './Assistant';
+
 
 interface Props {
     className?: string;
@@ -8,24 +12,24 @@ interface Props {
 export default function WeatherReadout({ className }: Props) {
 
     const {
-        weatherData,
         locationData,
         specificLocal
     } = useWeather();
 
     return (
-        <div className={`${styles.body} ${className && styles[className]}`}>
+        <div className={`${styles.body} ${className}`}>
             {locationData &&
                 <div className={styles.neighborhood}>
                     <span>{specificLocal}</span>
                 </div>
             }
+            
+            <HeroData  />
 
-            {weatherData &&
-                <div className={styles.feelsLikeContainer}>
-                    <span>{Math.round(weatherData[0].main.feels_like)}&#176;</span>
-                </div>
-            }
+            <LesserData />
+
+            <Assistant />
+                
         </div>
     );
 }
