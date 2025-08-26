@@ -4,10 +4,13 @@ export interface LocationObj {
     suburb?: string;
     hamlet?: string;
     neighbourhood?: string;
+    state?: string;
     state_code?: string;
     district?: string;
     region?: string;
     iso3166_2?: string;
+    country?: string;
+    name?: string;
 }
 
 export interface DataCardHeroProps {
@@ -133,3 +136,5 @@ export interface Weather {
   description?: string;
   icon?: string;
 }
+
+export type TempUnit = 'f' | 'c';

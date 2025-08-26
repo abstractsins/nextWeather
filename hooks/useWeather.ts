@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LocationObj, ForecastResponse } from "@/types/types";
+import { LocationObj, ForecastResponse, TempUnit } from "@/types/types";
 
 type Coords = { lat: number; lon: number };
 
@@ -10,15 +10,10 @@ export default function useWeather() {
     const [weatherData, setWeatherData] = useState<ForecastResponse>();
     const [error, setError] = useState<string | null>(null);
     const [specificLocal, setSpecificLocal] = useState<string | null | undefined>(null);
-    const [assistantResponse, setAssistantResponse] = useState<Promise<string | undefined>>();
+    const [assistantResponse, setAssistantResponse] = useState<string | undefined>();
     const [assistantWaiting, setAssistantWaiting] = useState<boolean>(false);
 
-    const prompt = `What's it like in ${JSON.stringify(coords)} right now? Dont use Kelvin. Use Farenheit and MPH. Use the word 'damn'`;
-
-    const promptObj = { prompt };
-
-    console.log(promptObj);
-
+    const [units, setUnits] = useState<TempUnit>('f');
 
     // Get browser location once
     useEffect(() => {
@@ -77,11 +72,25 @@ export default function useWeather() {
         return () => ac.abort();
     }, [coords]);
 
+    const createPrompt = (): string => {
+        const promptLocation = `${locationData?.city!}, ${locationData?.state!}, ${locationData?.country!} ${locationData?.name!}`;
 
-
+        let prompt = `What's it like in ${promptLocation} right now? `;
+        prompt += `Don't use Kelvin. Use ${units === 'f' ? 'farenheit (rounded to nearest degree F) and MPH. DO NOT USE CELCIUS OR KPH. do not use metric at all.' : 'celcius with one decimal place and KPH. USE METRIC ONLY'}. `; 
+        prompt += `You must use the word 'damn' at least once as a modifier to an adjective about the weather overall or an acute aspect about it. `;
+        prompt += `Be very emotional. `
+        prompt += `Keep the overall response to three sentences max, or about 35 words. `
+        return prompt;
+    };
 
     useEffect(() => {
         if (!locationData) return
+
+        const prompt = createPrompt();
+
+        console.log(locationData);
+
+        const ac = new AbortController();
 
         setAssistantWaiting(true);
 
@@ -92,35 +101,33 @@ export default function useWeather() {
             locationData.district ||
             locationData.region ||
             locationData.county ||
+            locationData.country ||
+            locationData.name ||
             'unknown'
-        )
+        );
 
-        console.log(JSON.stringify(promptObj));
-
-        const run = async () => {
+        (async () => {
 
             try {
                 const res = await fetch(`/api/assistant`, {
                     method: "POST",
                     headers: { "content-type": "application/json" },
-                    body: JSON.stringify(promptObj)
+                    body: JSON.stringify({ prompt })
                 })
                     .then(data => data.json());
 
-                return res.answer;
+                setAssistantResponse(res?.answer);
             } catch (e) {
                 console.error(e);
                 setAssistantWaiting(false)
-                return 'There was some kind of error! See the damn console.';
+                setAssistantResponse('There was some kind of error! See the damn console.');
             } finally {
                 setAssistantWaiting(false);
+                if (!ac.signal.aborted) setAssistantWaiting(false);
             }
-        };
+        })();
 
-        const res = run();
-
-        setAssistantResponse(res);
-
+        return () => ac.abort();
     }, [locationData]);
 
 
@@ -130,7 +137,6 @@ export default function useWeather() {
         weatherData, setWeatherData,
         coords, setCoords, setCustomCoords,
         assistantResponse, assistantWaiting,
-        promptObj,
         error
     };
 }

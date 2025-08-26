@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
 
-    const promptObj = req.json();
+    const promptObj = await req.json();
 
     console.log(promptObj);
 

@@ -8,11 +8,11 @@ export default function Assistant() {
     const { assistantResponse, assistantWaiting } = useWeather();
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper}`}>
             <div className={styles.body}>
                 {assistantWaiting
                     ? <MiniLoader />
-                    : <span>{assistantResponse}</span>
+                    : <p>{assistantResponse}</p>
                 }
             </div>
         </div>
