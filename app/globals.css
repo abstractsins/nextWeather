@@ -76,6 +76,7 @@ body {
   display: flex;
   font-size: clamp(16pt, 1.9vw + 1rem, 42pt);
   align-items: baseline;
+  justify-content: center;
 }
 
 .data-label-small {

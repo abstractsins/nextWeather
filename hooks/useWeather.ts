@@ -69,6 +69,26 @@ const enforceSentenceCase = (text: string): string => {
     .join(" ");
 };
 
+const countDamnOccurrences = (text: string): number =>
+  (text.match(/\bdamn\b/gi) ?? []).length;
+
+const enforceSingleDamn = (text: string): string => {
+  if (countDamnOccurrences(text) === 1) return text;
+
+  const cleaned = text
+    .replace(/\bdamn\b/gi, "")
+    .replace(/\s+([.,!?;:])/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned) return "Damn.";
+
+  const withTrailingPunctuation = /[.!?]$/.test(cleaned)
+    ? cleaned
+    : `${cleaned}.`;
+  return `${withTrailingPunctuation} Damn.`;
+};
+
 const buildDeterministicAssistantResponse = (
   location: string,
   current: CurrentWeather,
@@ -82,7 +102,7 @@ const buildDeterministicAssistantResponse = (
   const tempUnitLabel = units === "f" ? "°F" : "°C";
   const windUnitLabel = units === "f" ? "MPH" : "KPH";
 
-  return `Right now in **${location}** it’s **${condition}** — about **${temp}${tempUnitLabel}** (feels like **${feelsLike}${tempUnitLabel}**), with **${humidity}% humidity** and wind around **${wind} ${windUnitLabel}**.`;
+  return `Right now in **${location}** it’s **${condition}** — about **${temp}${tempUnitLabel}** (feels like **${feelsLike}${tempUnitLabel}**), with **${humidity}% humidity** and wind around **${wind} ${windUnitLabel}**. Damn, that weather is intense.`;
 };
 
 const hasForbiddenUnits = (text: string, units: TempUnit): boolean => {
@@ -140,7 +160,9 @@ const getVerifiedAssistantResponse = (
   const text = enforceSentenceCase(getAssistantAnswer(answer));
   if (!text) {
     return enforceSentenceCase(
-      buildDeterministicAssistantResponse(location, current, units),
+      enforceSingleDamn(
+        buildDeterministicAssistantResponse(location, current, units),
+      ),
     );
   }
 
@@ -149,11 +171,13 @@ const getVerifiedAssistantResponse = (
     !includesExpectedValues(text, current, units)
   ) {
     return enforceSentenceCase(
-      buildDeterministicAssistantResponse(location, current, units),
+      enforceSingleDamn(
+        buildDeterministicAssistantResponse(location, current, units),
+      ),
     );
   }
 
-  return text;
+  return enforceSentenceCase(enforceSingleDamn(text));
 };
 
 export default function useWeather() {
@@ -172,6 +196,7 @@ export default function useWeather() {
     string | undefined
   >();
   const [assistantWaiting, setAssistantWaiting] = useState<boolean>(false);
+  const [weatherLoading, setWeatherLoading] = useState<boolean>(false);
   const [lastWeatherUpdatedAt, setLastWeatherUpdatedAt] = useState<Date | null>(
     null,
   );
@@ -205,6 +230,7 @@ export default function useWeather() {
     if (!coords) return;
 
     const ac = new AbortController();
+    setWeatherLoading(true);
 
     (async () => {
       try {
@@ -227,6 +253,8 @@ export default function useWeather() {
           const msg = e instanceof Error ? e.message : String(e);
           setError(msg);
         }
+      } finally {
+        if (!ac.signal.aborted) setWeatherLoading(false);
       }
     })();
 
@@ -355,6 +383,7 @@ export default function useWeather() {
     setCustomCoords,
     assistantResponse,
     assistantWaiting,
+    weatherLoading,
     error,
   };
 }

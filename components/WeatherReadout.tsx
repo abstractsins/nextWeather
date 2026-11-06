@@ -30,6 +30,7 @@ export default function WeatherReadout({ className }: Props) {
         specificLocal,
         weatherData,
         lastWeatherUpdatedAt,
+        weatherLoading,
         units,
         setUnits
     } = useWeather();
@@ -137,6 +138,8 @@ export default function WeatherReadout({ className }: Props) {
                     type="button"
                     className={`${styles.unitButton} ${units === 'f' ? styles.activeUnit : ''}`}
                     onClick={() => setUnits('f')}
+                    disabled={weatherLoading}
+                    aria-busy={weatherLoading}
                 >
                     °F
                 </button>
@@ -144,14 +147,17 @@ export default function WeatherReadout({ className }: Props) {
                     type="button"
                     className={`${styles.unitButton} ${units === 'c' ? styles.activeUnit : ''}`}
                     onClick={() => setUnits('c')}
+                    disabled={weatherLoading}
+                    aria-busy={weatherLoading}
                 >
                     °C
                 </button>
             </div>
-            
-            <HeroData  />
 
-            <LesserData />
+            <>
+                <HeroData />
+                <LesserData />
+            </>
 
             <Assistant />
                 
