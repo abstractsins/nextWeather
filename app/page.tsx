@@ -14,7 +14,7 @@ export default function Home() {
     const { locationData, generalLocal } = useWeather();
 
     return (
-        <div>
+        <div className={styles.page}>
 
             <div className={styles.location}>
                 <span className={styles.cityState}>

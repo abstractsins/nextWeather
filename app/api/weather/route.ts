@@ -5,6 +5,7 @@ export async function GET(req: NextRequest) {
         const url = new URL(req.url);
         const lat = url.searchParams.get("lat");
         const lon = url.searchParams.get("lon");
+        const unitsParam = url.searchParams.get("units");
 
         if (!lat || !lon) {
             return NextResponse.json(
@@ -25,7 +26,8 @@ export async function GET(req: NextRequest) {
         u.searchParams.set("lat", lat);
         u.searchParams.set("lon", lon);
         u.searchParams.set("appid", apiKey);
-        u.searchParams.set("units", "imperial");
+        const upstreamUnits = unitsParam === "c" ? "metric" : "imperial";
+        u.searchParams.set("units", upstreamUnits);
 
         const upstream = await fetch(u.toString());
 

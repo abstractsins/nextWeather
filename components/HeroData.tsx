@@ -1,7 +1,6 @@
 import { useWeather } from '@/providers/WeatherProvider';
 
 import DataCardBasic from "./DataCardBasic";
-import LesserData from "./LesserData";
 
 export default function HeroData() {
 
@@ -21,6 +20,12 @@ export default function HeroData() {
             title: "Humidity",
             className: "data-container hero",
             data: weatherData.current?.humidity
+        },
+        {
+            id: "feels_like",
+            title: "Feels Like",
+            className: "data-container hero",
+            data: weatherData.current?.feels_like
         },
         {
             id: "wind",

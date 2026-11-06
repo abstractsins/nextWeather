@@ -2,10 +2,11 @@ import { useWeather } from '@/providers/WeatherProvider';
 
 import DataCardLesser from "./DataCardLesser";
 import { useEffect, useState } from "react";
+import { getPrecipitationSummary, toCardinalDirection } from '@/utils/utils';
 
 export default function LesserData() {
 
-    const { weatherData } = useWeather();
+    const { weatherData, units } = useWeather();
     const [isSnow, setIsSnow] = useState<boolean>(false);
     const [isRain, setIsRain] = useState<boolean>(false);
 
@@ -15,6 +16,9 @@ export default function LesserData() {
     }, [weatherData])
 
     if (!weatherData) return;
+
+    const rainSummary = getPrecipitationSummary(weatherData.current?.rain?.['1h'], 'rain', units);
+    const snowSummary = getPrecipitationSummary(weatherData.current?.snow?.['1h'], 'snow', units);
 
 
     return (
@@ -38,18 +42,37 @@ export default function LesserData() {
                                 id={"rain"}
                                 title={"Rain"}
                                 className={"data-container"}
-                                data={weatherData.current?.rain!['1h']}
-                                data2={weatherData.current?.weather[0].description}
+                                data={rainSummary.amountLabel}
+                                data2={rainSummary.detail}
                             />
                         }
 
                         {isSnow &&
                             <DataCardLesser
-                                id={"rain"}
-                                title={"Rain"}
+                                id={"snow"}
+                                title={"Snow"}
                                 className={"data-container"}
-                                data={weatherData.current?.snow!['1h']}
-                                data2={weatherData.current?.weather[0].description}
+                                data={snowSummary.amountLabel}
+                                data2={snowSummary.detail}
+                            />
+                        }
+
+                        {typeof weatherData.current?.wind_deg === 'number' &&
+                            <DataCardLesser
+                                id={"wind_direction"}
+                                title={"Wind Dir"}
+                                className={"data-container"}
+                                data={toCardinalDirection(weatherData.current?.wind_deg)}
+                                data2={`${Math.round(weatherData.current?.wind_deg ?? 0)}°`}
+                            />
+                        }
+
+                        {typeof weatherData.current?.wind_gust === 'number' &&
+                            <DataCardLesser
+                                id={"wind_gust"}
+                                title={"Wind Gust"}
+                                className={"data-container"}
+                                data={weatherData.current?.wind_gust}
                             />
                         }
 

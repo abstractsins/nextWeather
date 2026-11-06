@@ -4,15 +4,21 @@
   align-items: center;
   border: 1px solid var(--foreground);
   border-radius: 20px;
-  margin: 3vh 3vw;
-  padding: 1vh;
+  margin: clamp(6px, 1dvh, 12px) clamp(8px, 1.4vw, 16px);
+  padding: clamp(5px, 0.8dvh, 10px);
+  min-height: 75px;
 }
 
 .body {
-    padding: 2vh 1vw;
-    min-height: 100px;
+  padding: clamp(6px, 1dvh, 12px) clamp(6px, 1vw, 12px);
+  min-height: 0;
 }
 
 .body p {
-    font-size: clamp(10pt, 2vw + .5rem, 24pt);
+  font-size: clamp(10pt, 2vw + 0.5rem, 24pt);
+}
+
+.markdown p {
+  margin: 0;
+  font-size: clamp(10pt, 2vw + 0.5rem, 24pt);
 }

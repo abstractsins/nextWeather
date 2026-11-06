@@ -1,4 +1,5 @@
 import styles from './Assistant.module.css';
+import ReactMarkdown from 'react-markdown';
 
 import { useWeather } from '@/providers/WeatherProvider';
 import MiniLoader from './MiniLoader';
@@ -12,7 +13,11 @@ export default function Assistant() {
             <div className={styles.body}>
                 {assistantWaiting
                     ? <MiniLoader />
-                    : <p>{assistantResponse}</p>
+                    : (
+                        <div className={styles.markdown}>
+                            <ReactMarkdown>{assistantResponse ?? ''}</ReactMarkdown>
+                        </div>
+                    )
                 }
             </div>
         </div>
