@@ -9,11 +9,7 @@ export default function MiniLoader() {
     const [spinnerText, setSpinnerText] = useState('');
 
     useEffect(() => {
-        let count = 0;
-
         const spinner = () => {
-            count++;
-
             setSpinnerText(prev => {
                 switch (prev) {
                     case '': return '.';

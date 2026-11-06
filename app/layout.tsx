@@ -38,7 +38,8 @@ import { WeatherProvider } from '@/providers/WeatherProvider';
 
 export const metadata: Metadata = {
   title: "NextWeather",
-  description: "A Next.js Weather App",
+  description:
+    "Current conditions and concise local weather summaries powered by OpenWeather and Geoapify.",
 };
 
 export default function RootLayout({
@@ -66,7 +67,6 @@ export default function RootLayout({
       </head>
       <body className={`${monst.variable} ${zain.variable} ${geistSans.variable} ${geistMono.variable} antialiased`} >
         <WeatherProvider>
-          {/* {process.env.NEXT_PUBLIC_ENV !== 'production' && } */}
           <AdminDropdown />
           {children}
         </WeatherProvider>

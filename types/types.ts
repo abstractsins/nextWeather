@@ -14,6 +14,19 @@ export interface LocationObj {
     ocean?: string;
 }
 
+export interface ApiErrorResponse {
+  error: string;
+  details?: string;
+}
+
+export interface ReverseGeocodeResponse {
+  results?: LocationObj[];
+}
+
+export interface AssistantResponse {
+  answer?: string;
+}
+
 export interface DataCardHeroProps {
     key: number | string;
     id: string;

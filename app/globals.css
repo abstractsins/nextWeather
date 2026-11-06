@@ -51,10 +51,6 @@ body {
   overflow: hidden;
 }
 
-* {
-  /* border: 1px solid red; */
-}
-
 .data-container {
   display: flex;
   flex-direction: column;

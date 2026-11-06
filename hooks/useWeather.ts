@@ -1,12 +1,40 @@
 import { useEffect, useState } from "react";
 import {
+  ApiErrorResponse,
+  AssistantResponse,
   CurrentWeather,
   LocationObj,
   ForecastResponse,
+  ReverseGeocodeResponse,
   TempUnit,
 } from "@/types/types";
 
 type Coords = { lat: number; lon: number };
+
+const isApiError = (value: unknown): value is ApiErrorResponse =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as { error?: unknown }).error === "string";
+
+const fetchJsonOrThrow = async <T>(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<T> => {
+  const response = await fetch(input, init);
+  const text = await response.text();
+  const parsed = text ? (JSON.parse(text) as unknown) : {};
+
+  if (!response.ok) {
+    if (isApiError(parsed)) {
+      const details = parsed.details ? `: ${parsed.details}` : "";
+      throw new Error(`${parsed.error}${details}`);
+    }
+
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return parsed as T;
+};
 
 const getAssistantAnswer = (value: unknown): string => {
   if (typeof value !== "string") return "No answer returned.";
@@ -54,7 +82,7 @@ const buildDeterministicAssistantResponse = (
   const tempUnitLabel = units === "f" ? "°F" : "°C";
   const windUnitLabel = units === "f" ? "MPH" : "KPH";
 
-  return `Right now in **${location}** it’s damn **${condition}** — about **${temp}${tempUnitLabel}** (feels like **${feelsLike}${tempUnitLabel}**), with **${humidity}% humidity** and wind around **${wind} ${windUnitLabel}**.`;
+  return `Right now in **${location}** it’s **${condition}** — about **${temp}${tempUnitLabel}** (feels like **${feelsLike}${tempUnitLabel}**), with **${humidity}% humidity** and wind around **${wind} ${windUnitLabel}**.`;
 };
 
 const hasForbiddenUnits = (text: string, units: TempUnit): boolean => {
@@ -181,19 +209,19 @@ export default function useWeather() {
     (async () => {
       try {
         const [rev, weather] = await Promise.all([
-          fetch(`/api/reverse-geocode?lat=${coords.lat}&lon=${coords.lon}`, {
-            signal: ac.signal,
-          }).then((r) => r.json()),
-
-          fetch(`/api/weather?lat=${coords.lat}&lon=${coords.lon}&units=${units}`, {
-            signal: ac.signal,
-          }).then((r) => r.json()),
+          fetchJsonOrThrow<ReverseGeocodeResponse>(
+            `/api/reverse-geocode?lat=${coords.lat}&lon=${coords.lon}`,
+            { signal: ac.signal },
+          ),
+          fetchJsonOrThrow<ForecastResponse>(
+            `/api/weather?lat=${coords.lat}&lon=${coords.lon}&units=${units}`,
+            { signal: ac.signal },
+          ),
         ]);
 
-        setLocationData(rev?.results?.[0] ?? null);
-        setWeatherData(weather ?? null);
+        setLocationData(rev.results?.[0] ?? null);
+        setWeatherData(weather);
         if (weather) setLastWeatherUpdatedAt(new Date());
-        console.log(weather);
       } catch (e) {
         if (!ac.signal.aborted) {
           const msg = e instanceof Error ? e.message : String(e);
@@ -284,24 +312,16 @@ export default function useWeather() {
 
     (async () => {
       try {
-        const res = await fetch(`/api/assistant`, {
+        const json = await fetchJsonOrThrow<AssistantResponse>(`/api/assistant`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ prompt }),
           signal: ac.signal,
         });
 
-        const text = await res.text(); // body might be empty on 500
-        if (!res.ok) {
-          throw new Error(
-            `/api/assistant ${res.status} ${text || "(empty body)"}`,
-          );
-        }
-
-        const json = text ? JSON.parse(text) : {};
         setAssistantResponse(
           getVerifiedAssistantResponse(
-            json?.answer,
+            json.answer,
             assistantLocation,
             current,
             units,
@@ -310,9 +330,7 @@ export default function useWeather() {
       } catch (e) {
         if (!ac.signal.aborted) {
           console.error(e);
-          setAssistantResponse(
-            "There was some kind of error! See the damn console.",
-          );
+          setAssistantResponse("Unable to fetch assistant summary right now.");
         }
       } finally {
         if (!ac.signal.aborted) setAssistantWaiting(false);
